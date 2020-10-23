@@ -1,0 +1,29 @@
+- hosts: localhost
+  connection: local
+  become: true
+  tasks:
+    - name: Disable SELinux
+      selinux:
+        state: disabled
+    
+    - name: Install git
+      yum:
+        name: git
+        state: present
+
+    - name: Clone script for setup openvpn
+      git:
+        repo: "https://github.com/Nyr/openvpn-install.git"
+        dest: /home/jerrye/openvpn
+      
+    - name: Add execute permission to script
+      file: dest=/home/jerrye/openvpn/openvpn-install.sh mode=u+x
+    
+    - name: Run script for setup openvpn
+      shell: echo | /home/jerrye/openvpn/openvpn-install.sh
+    
+    - name: Copy client.ovpn
+      copy:
+        src: /root/client.ovpn
+        dest: /home/jerrye/client.ovpn
+        remote_src: yes
