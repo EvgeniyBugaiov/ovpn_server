@@ -1,7 +1,7 @@
 provider "google" {
-    credentials = "${file("stage_key.json")}"
-    project = "stage-263008"
-    region = "europe-west3"
+    credentials = "${file("vodomat-server.json")}"
+    project = "vodomat-server"
+    region = "us-east1"
 }
 
 resource "google_compute_firewall" "external_ports" {
@@ -16,8 +16,8 @@ resource "google_compute_firewall" "external_ports" {
 
 resource "google_compute_instance" "vpn-server" {
     name = "vpn-server"
-    machine_type = "f1-micro"
-    zone = "europe-west3-a"
+    machine_type = "e2-micro"
+    zone = "us-east1-b"
 
     connection {
         host = "${self.network_interface.0.access_config.0.nat_ip}"
@@ -49,8 +49,7 @@ resource "google_compute_instance" "vpn-server" {
 
     provisioner "remote-exec" {
         inline = [
-            "sudo yum install -y python-pip",
-            "sudo pip install ansible",
+            "sudo yum install -y ansible",
             "ansible-playbook /tmp/deploy.yml"
         ]
     }
